@@ -1,0 +1,17 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  username:
+  password:
+  port:
+  max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+
+development:
+  <<: *default
+  database: student_management_system_development
+  host: localhost
+
+test:
+  <<: *default
+  database: student_management_system_test
