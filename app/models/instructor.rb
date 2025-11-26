@@ -5,7 +5,7 @@ class Instructor < ApplicationRecord
   validates :email, presence: true, uniqueness: true
   validates :first_name, :last_name, :hire_date, :status, presence: true
 
-  enum status: {
+  enum :status, {
     active: 'active',
     inactive: 'inactive'
   }

@@ -3,7 +3,8 @@ class Attendance < ApplicationRecord
 
   validates :attendance_date, presence: true, uniqueness: { scope: :enrollment_id }
   validates :status, presence: :true
-  enum status: {
+
+  enum :status, {
     present: 'present',
     absent: 'absent',
     late: 'late'

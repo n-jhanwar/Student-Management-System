@@ -8,7 +8,7 @@ class Enrollment < ApplicationRecord
   validates :student_id, uniqueness: { scope: :subject_id, message: 'is already enrolled in this subject' }
   validates :enrollment_date, :status, presence: true
 
-  enum status: {
+  enum :status, {
     enrolled: 'enrolled',
     completed: 'completed',
     dropped: 'dropped',
