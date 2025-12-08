@@ -17,6 +17,18 @@ class Api::V1::StudentsController < Api::V1::BaseController
     end
   end
 
+  def update
+    student = Student.find(params[:id])
+
+    if student.update(update_student_params)
+      render json: { message: 'Student updated successfully', student: ::Api::V1::StudentSerializer.new(student).as_json }
+    else
+      render json: { error: student.errors.full_messages }, status: :unprocessable_entity
+    end
+  rescue
+    render json: { error: "Student does not exist"}, status: :not_found
+  end
+
   def index
     students = Student.all
 
@@ -37,6 +49,12 @@ class Api::V1::StudentsController < Api::V1::BaseController
   def create_student_params
     params.require(:student).permit(
       :first_name, :last_name, :email, :contact, :date_of_birth, :date_of_admission
+    )
+  end
+
+  def update_student_params
+    params.require(:student).permit(
+      :first_name, :last_name, :email, :contact, :date_of_birth, :date_of_admission, :status
     )
   end
 end

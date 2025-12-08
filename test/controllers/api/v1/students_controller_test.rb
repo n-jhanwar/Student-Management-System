@@ -53,6 +53,176 @@ class Api::V1::StudentsControllerTest < ActionDispatch::IntegrationTest
     assert_equal api_response['student']['status'], student.status
   end
 
+  test '#update, should update first_name of a student' do
+    student = create_student
+
+    get "/api/v1/students/#{student.id}"
+
+    assert_equal api_response['student']['id'], student.id
+    assert_equal api_response['student']['first_name'], student.first_name
+    assert_equal api_response['student']['formatted_date_of_birth'], student.date_of_birth.strftime('%d-%m-%Y')
+
+    update_params = {
+      first_name: Faker::Name.first_name,
+      date_of_birth: Faker::Date.birthday.strftime('%d-%m-%Y')
+    }
+
+    put "/api/v1/students/#{student.id}", params: { student: update_params }
+
+    assert_response :success
+
+    assert_equal api_response['student']['id'], student.id
+    assert_equal api_response['student']['first_name'], update_params[:first_name]
+    assert_equal api_response['student']['formatted_date_of_birth'], update_params[:date_of_birth]
+  end
+
+  test '#update, should update last_name of a student' do
+    student = create_student
+
+    get "/api/v1/students/#{student.id}"
+    assert_equal api_response['student']['id'], student.id
+    assert_equal api_response['student']['last_name'], student.last_name
+
+    update_params = {
+      last_name: Faker::Name.last_name
+    }
+
+    put "/api/v1/students/#{student.id}", params: { student: update_params }
+
+    assert_response :success
+
+    assert_equal api_response['student']['id'], student.id
+    assert_equal api_response['student']['last_name'], update_params[:last_name]
+  end
+
+  test '#update, should update date_of_birth of a student' do
+    student = create_student
+
+    get "/api/v1/students/#{student.id}"
+
+    assert_equal api_response['student']['id'], student.id
+    assert_equal api_response['student']['formatted_date_of_birth'], student.date_of_birth.strftime('%d-%m-%Y')
+
+    update_params = {
+      date_of_birth: Faker::Date.birthday.strftime('%d-%m-%Y')
+    }
+
+    put "/api/v1/students/#{student.id}", params: { student: update_params }
+
+    assert_response :success
+
+    assert_equal api_response['student']['id'], student.id
+    assert_equal api_response['student']['formatted_date_of_birth'], update_params[:date_of_birth]
+  end
+
+  test '#update, should update date_of_admission of qa student' do
+    student = create_student
+
+    get "/api/v1/students/#{student.id}"
+
+    assert_equal api_response['student']['id'], student.id
+    assert_equal api_response['student']['formatted_date_of_admission'], student.date_of_admission.strftime('%d-%m-%Y')
+
+    update_params = {
+      date_of_admission: Faker::Date.between(from: 1.year.ago, to: Date.today).strftime('%d-%m-%Y')
+    }
+
+    put "/api/v1/students/#{student.id}", params: { student: update_params }
+
+    assert_response :success
+
+    assert_equal api_response['student']['id'], student.id
+    assert_equal api_response['student']['formatted_date_of_admission'], update_params[:date_of_admission]
+  end
+
+  test '#update, should update email of a student' do
+    student = create_student
+
+    get "/api/v1/students/#{student.id}"
+    assert_equal api_response['student']['id'], student.id
+    assert_equal api_response['student']['email'], student.email
+
+    update_params = {
+      email: Faker::Internet.email
+    }
+
+    put "/api/v1/students/#{student.id}", params: { student: update_params }
+
+    assert_response :success
+
+    assert_equal api_response['student']['id'], student.id
+    assert_equal api_response['student']['email'], update_params[:email]
+  end
+
+  test '#update, should update contact of a student' do
+    student = create_student
+
+    get "/api/v1/students/#{student.id}"
+    assert_equal api_response['student']['id'], student.id
+    assert_equal api_response['student']['contact'], student.contact.to_s
+
+    update_params = {
+      contact: Faker::Number.number(digits: 10)
+    }
+
+    put "/api/v1/students/#{student.id}", params: { student: update_params }
+
+    assert_response :success
+
+    assert_equal api_response['student']['id'], student.id
+    assert_equal api_response['student']['contact'], update_params[:contact].to_s
+  end
+
+  test '#update, should not be able to update email if it is already taken' do
+    student1 = create_student
+    student2 = create_student
+
+    update_params = {
+      email: student1.email
+    }
+
+    put "/api/v1/students/#{student2.id}", params: { student: update_params }
+
+    assert_response :unprocessable_entity
+
+    assert_includes api_response['error'], 'Email has already been taken'
+  end
+
+  test '#update, should be able to update the status of a student' do
+    student = create_student
+
+    get "/api/v1/students/#{student.id}"
+    assert_equal api_response['student']['id'], student.id
+    assert_equal api_response['student']['status'], student.status
+
+    update_params = {
+      status: 'graduated'
+    }
+
+    put "/api/v1/students/#{student.id}", params: { student: update_params }
+
+    assert_response :success
+
+    assert_equal api_response['student']['id'], student.id
+    assert_equal api_response['student']['status'], update_params[:status]
+  end
+
+  test '#update, should not be able to update student Id' do
+    student = create_student
+    original_student_id = student.student_id
+
+    update_params = {
+      student_id: 'STU2025-TEST1234'
+    }
+
+    put "/api/v1/students/#{student.id}", params: { student: update_params }
+
+    assert_response :success
+    student.reload
+
+    assert_equal original_student_id, student.student_id
+  end
+
   test '#show, should return not found if student does not exist' do
     get "/api/v1/students/0"
 

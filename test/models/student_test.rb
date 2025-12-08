@@ -1,11 +1,21 @@
 class StudentTest < ActiveSupport::TestCase
   require 'test_helper'
 
-  test 'should set student_id before saving' do
+  test 'should set student_id before record creation' do
     student = Student.new(create_student_params)
 
     student.save
     assert_not_nil student.student_id
+  end
+
+  test 'should not update student id when a record is updated' do
+    student = create_student
+    original_student_id = student.student_id
+
+    student.update(first_name: Faker::Name.first_name)
+    student.reload
+
+    assert_equal original_student_id, student.student_id
   end
 
   test 'should validate date format' do
@@ -42,7 +52,7 @@ class StudentTest < ActiveSupport::TestCase
   test 'should validate presence of contact' do
     student = Student.new(create_student_params(contact: nil))
     assert_not student.valid?
-    assert_includes student.errors.full_messages, ['Contact can\'t be blank']
+    assert_includes student.errors.full_messages, 'Contact can\'t be blank'
   end
 
   test 'should validate presence of date_of_birth and date_of_admission' do
