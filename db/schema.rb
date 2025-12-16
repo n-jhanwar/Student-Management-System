@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_13_171507) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_08_092451) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -79,12 +79,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_171507) do
 
   create_table "subjects", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.bigint "instructors_id", null: false
+    t.bigint "instructor_id"
     t.string "semester", null: false
     t.string "subject_code", null: false
     t.string "subject_name", null: false
     t.datetime "updated_at", null: false
-    t.index ["instructors_id"], name: "index_subjects_on_instructors_id"
+    t.index ["instructor_id"], name: "index_subjects_on_instructor_id"
     t.index ["subject_code"], name: "index_subjects_on_subject_code", unique: true
   end
 
@@ -92,5 +92,5 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_13_171507) do
   add_foreign_key "enrollments", "students"
   add_foreign_key "enrollments", "subjects"
   add_foreign_key "grades", "enrollments"
-  add_foreign_key "subjects", "instructors", column: "instructors_id"
+  add_foreign_key "subjects", "instructors"
 end

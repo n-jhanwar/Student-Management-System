@@ -12,6 +12,8 @@ module ActiveSupport
     parallelize(workers: :number_of_processors)
     include ApiMacros
     include StudentsHelper
+    include SubjectHelper
+    include InstructorHelper
 
     self.use_transactional_tests = true
   end

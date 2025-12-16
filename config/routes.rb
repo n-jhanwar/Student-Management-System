@@ -8,6 +8,9 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :students, only: [:show, :create, :destroy, :index, :update]
+      resources :subjects, only: [:show, :create, :destroy, :index, :update]
+      resources :instructors, only: [:show, :create, :destroy, :index, :update]
+      resources :enrollments, only: [:show, :create, :destroy, :index, :update]
     end
   end
 end
